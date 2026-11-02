@@ -1,8 +1,14 @@
 # CC98 科目资料检索
 
+[![下载最新版](https://img.shields.io/github/v/release/gvvg5272-code/cc98-material-search?color=2f81f7&label=%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%89%88)](https://github.com/gvvg5272-code/cc98-material-search/releases/latest)
+[![License](https://img.shields.io/github/license/gvvg5272-code/cc98-material-search)](LICENSE)
+[![Chrome](https://img.shields.io/badge/Chrome-102%2B-4285F4?logo=googlechrome&logoColor=white)](https://www.google.com/chrome/)
+
 > 在 CC98 论坛里按科目找到**真正有资料**的帖子，而不是一堆「求一份讲义」。
 
 一个 Chrome / Edge 扩展（Manifest V3）。只读：搜索、读帖、下载附件，不发帖不回帖。
+
+**👉 [点这里下载最新版](https://github.com/gvvg5272-code/cc98-material-search/releases/latest)** —— 下载 zip，解压后按下方「安装」三步加载即可。
 
 ---
 
