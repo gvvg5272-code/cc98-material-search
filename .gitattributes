@@ -1,0 +1,7 @@
+# 统一换行符，避免 Windows/Linux 来回改
+* text=auto eol=lf
+
+# 二进制
+*.png binary
+*.jpg binary
+*.ico binary

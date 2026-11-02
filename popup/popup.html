@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CC98 科目资料检索</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- 导航标签 -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="search">🔍 搜索</button>
+    <button class="tab-btn" data-tab="downloads">📥 下载</button>
+    <button class="tab-btn" data-tab="settings">⚙️ 设置</button>
+  </nav>
+
+  <!-- ═══════ 搜索视图 ═══════ -->
+  <section id="tab-search" class="tab-content active">
+    <!-- Token 状态提示 -->
+    <div id="token-hint" class="hint-bar hint-warning" style="display:none;">
+      <span id="token-hint-text"></span>
+      <button id="token-hint-action" class="btn-link">去设置</button>
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="输入科目关键词，如 数据结构、高数下…" autocomplete="off">
+      <button id="search-btn" class="btn-primary">搜索</button>
+    </div>
+
+    <!-- 别名提示 -->
+    <div id="alias-hint" class="alias-hint" style="display:none;">
+      将搜索：<span id="alias-list"></span>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <select id="board-filter">
+        <option value="0">全站搜索</option>
+      </select>
+      <select id="condition-filter">
+        <option value="">仅标题</option>
+        <option value="1">标题+内容</option>
+      </select>
+      <label class="filter-toggle" title="自动扫描每条结果的楼主帖，把没有附件的折叠掉">
+        <input type="checkbox" id="only-material" checked> 只看有资料的
+      </label>
+      <select id="result-count" title="每次搜索取多少条（一页 20 条，每页约 3 秒）">
+        <option value="1">20 条</option>
+        <option value="3" selected>60 条</option>
+        <option value="5">100 条</option>
+      </select>
+    </div>
+
+    <!-- 搜索状态 -->
+    <div id="search-status" class="status-bar" style="display:none;">
+      <span id="search-status-text"></span>
+    </div>
+
+    <!-- 结果列表 -->
+    <div id="search-results" class="result-list"></div>
+
+    <!-- 加载更多 -->
+    <button id="load-more-btn" class="btn-secondary" style="display:none;">加载更多</button>
+  </section>
+
+  <!-- ═══════ 下载视图 ═══════ -->
+  <section id="tab-downloads" class="tab-content">
+    <!-- 下载控制栏 -->
+    <div class="download-controls">
+      <button id="dl-pause-btn" class="btn-secondary">⏸ 暂停</button>
+      <button id="dl-resume-btn" class="btn-secondary" disabled>▶ 继续</button>
+      <button id="dl-retry-btn" class="btn-secondary" disabled>🔄 重试失败</button>
+      <button id="dl-clear-btn" class="btn-secondary" disabled>🗑 清除已完成</button>
+    </div>
+
+    <!-- 下载状态统计 -->
+    <div id="download-summary" class="download-summary">
+      队列为空
+    </div>
+
+    <!-- 下载项列表 -->
+    <div id="download-list" class="download-list"></div>
+  </section>
+
+  <!-- ═══════ 设置视图 ═══════ -->
+  <section id="tab-settings" class="tab-content">
+    <!-- Token 设置 -->
+    <div class="setting-group">
+      <h3>🔑 Access Token</h3>
+      <p class="setting-desc">
+        在 CC98 网站登录后，按 Ctrl+Shift+J 打开 Console，执行
+        <code>localStorage.getItem('accessToken')</code>，把输出的整串值原样粘贴到下面
+        （形如 <code>str-Bearer eyJ...</code>，插件会自动剥掉前缀）。
+      </p>
+      <div class="token-input-group">
+        <input type="password" id="token-input" placeholder="粘贴你的 CC98 access token">
+        <button id="token-save-btn" class="btn-primary">保存</button>
+        <button id="token-validate-btn" class="btn-secondary">验证</button>
+        <button id="token-sync-btn" class="btn-secondary" title="从已登录的 CC98 标签页直接读取，不用手动复制">从 CC98 页面同步</button>
+      </div>
+      <div id="token-status" class="token-status">
+        当前状态：<span id="token-status-text">未设置</span>
+      </div>
+    </div>
+
+    <!-- 科目别名 -->
+    <div class="setting-group">
+      <h3>📚 科目别名</h3>
+      <p class="setting-desc">
+        自定义科目关键词到搜索词的映射，如 "高数下" → "高等数学（二）"。
+      </p>
+      <textarea id="alias-editor" rows="8" placeholder='{"高数下": ["高等数学（二）", "微积分B"]}'></textarea>
+      <button id="alias-save-btn" class="btn-primary">保存别名</button>
+    </div>
+
+    <!-- AI 总结 -->
+    <div class="setting-group">
+      <h3>🤖 AI 总结（可选）</h3>
+      <p class="setting-desc">
+        填任意 OpenAI 兼容接口即可（DeepSeek / OpenAI / Moonshot / 本地 Ollama）。
+        Key 只存在本机，只发往你填的这个地址。不填也能用——会退回本地打分。
+      </p>
+      <input type="text" id="ai-base" placeholder="https://api.deepseek.com" autocomplete="off">
+      <input type="text" id="ai-model" placeholder="deepseek-chat" autocomplete="off">
+      <input type="password" id="ai-key" placeholder="API Key（留空表示不修改）" autocomplete="off">
+      <div class="token-input-group">
+        <button id="ai-save-btn" class="btn-primary">保存</button>
+        <button id="ai-test-btn" class="btn-secondary">测试连接</button>
+      </div>
+      <div id="ai-status" class="token-status"></div>
+    </div>
+
+    <!-- 网络 -->
+    <div class="setting-group">
+      <h3>🌐 网络</h3>
+      <p class="setting-desc">
+        校园网直连 → IPv6 直连 → 可选 WebVPN。校外无 IPv6 时需连接校园 VPN。
+      </p>
+      <select id="network-mode">
+        <option value="direct">校园网直连</option>
+        <option value="ipv6">IPv6 直连</option>
+        <option value="webvpn">WebVPN（需配置）</option>
+      </select>
+    </div>
+
+    <!-- 关于 -->
+    <div class="setting-group">
+      <h3>ℹ️ 关于</h3>
+      <p>CC98 科目资料检索插件 v0.1.0</p>
+      <p class="setting-desc">
+        本插件仅提供搜索和下载功能，不执行任何写操作，不绕过权限限制。
+      </p>
+    </div>
+  </section>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

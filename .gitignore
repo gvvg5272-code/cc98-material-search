@@ -1,0 +1,10 @@
+# 运行时产物
+test/out/
+
+# 依赖（本项目无 npm 依赖，留作占位）
+node_modules/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+*.log

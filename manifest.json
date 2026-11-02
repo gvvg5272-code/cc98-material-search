@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "CC98 科目资料检索",
+  "version": "0.1.0",
+  "description": "按科目关键词检索 CC98 帖子，展示附件信息，下载有权限访问的附件",
+  "permissions": [
+    "storage",
+    "downloads",
+    "scripting",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://www.cc98.org/*",
+    "https://api.cc98.org/*",
+    "https://file.cc98.org/*",
+    "https://openid.cc98.org/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

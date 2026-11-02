@@ -1,0 +1,12 @@
+{
+  "name": "cc98-material-search",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "CC98 科目资料检索 Chrome 扩展（MV3）",
+  "scripts": {
+    "test": "node test/regression.test.mjs",
+    "test:live": "node test/api-verify.test.mjs",
+    "verify": "node scripts/api-verify.mjs"
+  }
+}
